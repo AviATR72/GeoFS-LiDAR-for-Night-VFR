@@ -2,10 +2,10 @@
 (() => {
   "use strict";
 
-  // NIGHT VFR LiDAR NEON
-  // Smooth terrain-elevation gradient with a subtle neon halo.
+  // NIGHT VFR LiDAR
+  // Smooth terrain-elevation gradient
 
-  // Cleanly remove the previous version and restore its changes.
+  // Window
   try {
     window.NightVFRLiDAR?.destroy();
   } catch (e) {
