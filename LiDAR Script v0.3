@@ -43,8 +43,9 @@
   // AIRCRAFT-CENTRED TERRAIN SCAN SETTINGS
   // --------------------------------------------------
 
-  const SCAN_RADIUS_METERS = 20000;
-  const TOTAL_SAMPLES = 18000;
+  // These two values are now adjustable from the UI.
+  let SCAN_RADIUS_METERS = 20000;
+  let TOTAL_SAMPLES = 18000;
 
   // Neon appearance.
   const POINT_SIZE = 2;
@@ -156,6 +157,38 @@
       OCEAN POINTS: ON
     </button>
 
+    <!-- Added scan-configuration sliders -->
+    <div style="
+      margin-top:12px;padding-top:9px;
+      border-top:1px solid #16394b">
+      <div style="font-weight:bold;color:#8ac9d5;margin-bottom:7px">
+        SCAN CONFIGURATION
+      </div>
+
+      <label for="nvfr-samples" style="
+        display:flex;justify-content:space-between;
+        color:#b8faff;margin-bottom:5px">
+        <span>TERRAIN POINTS</span>
+        <span id="nvfr-samples-value">18,000</span>
+      </label>
+      <input id="nvfr-samples" type="range"
+        min="5000" max="40000" step="1000" value="18000"
+        style="width:100%;margin:0 0 10px;accent-color:#25eaff;cursor:pointer">
+
+      <label for="nvfr-radius" style="
+        display:flex;justify-content:space-between;
+        color:#b8faff;margin-bottom:5px">
+        <span>SCAN RADIUS</span>
+        <span id="nvfr-radius-value">20 km</span>
+      </label>
+      <input id="nvfr-radius" type="range"
+        min="5000" max="50000" step="1000" value="20000"
+        style="width:100%;margin:0 0 3px;accent-color:#25eaff;cursor:pointer">
+      <div style="color:#779cac;font-size:10px">
+        Radius range: 5–50 km
+      </div>
+    </div>
+
     <div id="nvfr-status" style="
       margin-top:9px;color:#b9d5df;
       line-height:1.5">
@@ -164,8 +197,8 @@
 
     <div style="margin-top:10px;color:#779cac;line-height:1.7">
       Aircraft-centred terrain scan<br>
-      Radius: 20 km<br>
-      Terrain samples: 18,000<br>
+      Radius: <span id="nvfr-info-radius">20 km</span><br>
+      Terrain samples: <span id="nvfr-info-samples">18,000</span><br>
       Neon halo: enabled<br>
       Original imagery: preserved
     </div>
@@ -208,6 +241,45 @@
   const oceanButton = panel.querySelector("#nvfr-ocean-toggle");
   const status = panel.querySelector("#nvfr-status");
   const closeButton = panel.querySelector("#nvfr-close");
+
+  // Added slider elements.
+  const samplesSlider = panel.querySelector("#nvfr-samples");
+  const radiusSlider = panel.querySelector("#nvfr-radius");
+  const samplesValue = panel.querySelector("#nvfr-samples-value");
+  const radiusValue = panel.querySelector("#nvfr-radius-value");
+  const infoSamples = panel.querySelector("#nvfr-info-samples");
+  const infoRadius = panel.querySelector("#nvfr-info-radius");
+
+  function updateScanSettingsDisplay() {
+    samplesValue.textContent = TOTAL_SAMPLES.toLocaleString();
+    radiusValue.textContent = `${SCAN_RADIUS_METERS / 1000} km`;
+    infoSamples.textContent = TOTAL_SAMPLES.toLocaleString();
+    infoRadius.textContent = `${SCAN_RADIUS_METERS / 1000} km`;
+  }
+
+  function applyScanSettings() {
+    TOTAL_SAMPLES = Number(samplesSlider.value);
+    SCAN_RADIUS_METERS = Number(radiusSlider.value);
+    updateScanSettingsDisplay();
+
+    // Make the next refresh use the new settings.
+    state.lastPosition = null;
+
+    // If a scan is currently running, invalidate it. Its cleanup will
+    // release the scanning lock; the regular refresh timer then starts
+    // a fresh scan using the updated slider values.
+    if (state.scanning) {
+      state.scanId++;
+    } else if (state.enabled) {
+      refresh(true);
+    }
+
+    scene.requestRender();
+  }
+
+  samplesSlider.addEventListener("input", applyScanSettings);
+  radiusSlider.addEventListener("input", applyScanSettings);
+  updateScanSettingsDisplay();
 
   function showPanel() {
     panel.style.display = "block";
@@ -840,6 +912,12 @@
   state.showPanel = showPanel;
   state.hidePanel = hidePanel;
 
+  // Expose current scan settings for inspection / external control.
+  state.getScanSettings = () => ({
+    totalSamples: TOTAL_SAMPLES,
+    radiusMeters: SCAN_RADIUS_METERS
+  });
+
   state.destroy = () => {
     if (state.destroyed) return;
 
@@ -872,6 +950,6 @@
   setLidarMode("auto");
 
   console.log(
-    "[Night VFR] LiDAR NEON loaded. 20 km scan, 18,000 terrain samples, smooth elevation gradient."
+    "[Night VFR] LiDAR NEON loaded. Adjustable 5,000–40,000 terrain samples and 5–50 km scan radius, smooth elevation gradient."
   );
 })();
