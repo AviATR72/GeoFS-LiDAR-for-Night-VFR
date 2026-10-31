@@ -17,5 +17,7 @@ The addon features toggles including ocean points (Points on the ocean surface c
 
 Installation is currently done with the Console function. I am working to implement Tampermonkey support as well. To install the LiDAR script, copy the code from the "LiDAR Script" file, go to GeoFS, click "FLY", and open the Console. Paste the code into the console and click "Enter". 
 
-Updates are to be expected. Likely updates include sliders to change point density or brightness, transparency support (H on GeoFS) and work to make it only function at night (During the day it looks bad) 
+Updates are to be expected. Likely updates include sliders to change point density or brightness, transparency support (H on GeoFS) and small bug fixes.
 Any suggestions for updates, I can be reached at the Discord handle "aquila_atr72". 
+
+Happy flying!
