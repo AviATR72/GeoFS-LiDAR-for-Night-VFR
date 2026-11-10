@@ -15,9 +15,10 @@ Lower altitude terrain is projected with different coloured LiDAR points. Near-s
 
 The addon features toggles including ocean points (Points on the ocean surface can be turned on or off), and "On/Off/Auto" (Auto means the points only appear at night and happens automatically)
 
-Installation is currently done with the Console function. I am working to implement Tampermonkey support as well. To install the LiDAR script, copy the code from the "LiDAR Script" file, go to GeoFS, click "FLY", and open the Console. Paste the code into the console and click "Enter". 
+Installation is done with the Dev console. To install the LiDAR script, copy the code from the "LiDAR Script" file, go to GeoFS, click "FLY", and open the Console. Paste the code into the console and click "Enter". 
 
 Updates are to be expected. Likely updates include sliders to change point density or brightness, transparency support (H on GeoFS) and small bug fixes.
 Any suggestions for updates, I can be reached at the Discord handle "aquila_atr72". 
 
 Happy flying!
+Avi xx
